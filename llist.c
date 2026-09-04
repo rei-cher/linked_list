@@ -45,7 +45,7 @@ llist_t * llist_create(void)
 	p_new_list->size = 0;
 
 END:
-	return new_list;
+	return p_new_list;
 }
 
 void llist_destroy(llist_t ** pp_list, free_f p_free)
@@ -60,7 +60,7 @@ void llist_destroy(llist_t ** pp_list, free_f p_free)
 	
 	while (0 < (* pp_list)->size)
 	{
-		p_data = llist_pop(* pp_data);
+		p_data = llist_pop(* pp_list);
 
 		if (NULL != p_free)
 		{
@@ -223,7 +223,7 @@ END:
 
 int llist_size(llist_t * p_list)
 {
-	uint32_t size = 0;
+	int size = 0;
 
 	if (NULL == p_list)
 	{
@@ -238,24 +238,82 @@ END:
 
 int llist_contains(llist_t * p_list, void * p_data, comp_f p_comp)
 {
-    (void)p_list;
-    (void)p_data;
-    (void)p_comp;
-    return 0;
+	int result = 0;
+
+	if ((NULL == p_list) ||
+		(NULL == p_data) ||
+		(NULL == p_comp) ||
+		(0 == p_list->size))
+	{
+		goto END;
+	}
+
+	node_t * current = p_list->p_head;
+
+	while (NULL != current)
+	{
+		if (!p_comp(current->p_ptr, p_data))
+		{
+			result++;
+		}
+
+		current = current->p_next;
+	}
+
+END:
+	return result;
 }
 
 int llist_iter(llist_t * p_list, iter_f p_iter)
 {
-    (void)p_list;
-    (void)p_iter;
-    return EXIT_FAILURE;
+	int SUCCESS = 1;
+
+	if ((NULL == p_list) ||
+		(NULL == p_list->p_head))
+	{
+		goto END;
+	}
+
+	node_t * current = p_list->p_head;
+
+	while (NULL != current)
+	{
+		p_iter(current->p_ptr);
+
+		current = current->p_next;
+	}
+
+	SUCCESS = 0;
+	
+END:
+	return SUCCESS;
 }
 
 int llist_sort(llist_t * p_list, comp_f p_comp)
 {
-    (void)p_list;
-    (void)p_comp;
-    return EXIT_FAILURE;
+	int SUCCESS = 1;
+
+	if ((NULL == p_list) ||
+		(NULL == p_comp))
+	{
+		goto END;
+	}
+
+	node_t * current = p_list->p_head;
+
+	while (NULL != current)
+	{
+		if (!p_comp(current, current->p_next))
+		{
+			continue;
+		}
+
+	}
+
+	SUCCESS = 0;
+
+END:
+	return SUCCESS;
 }
 
 // TODO: static function definitions here
