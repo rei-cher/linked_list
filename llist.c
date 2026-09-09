@@ -31,7 +31,7 @@ struct llist
 
 // TODO: static function prototypes here
 /**
- * @brief 
+ * @brief Swaps data between two given nodes
  *
  * @param p_f_node
  * @param p_s_node
@@ -39,7 +39,7 @@ struct llist
 static void swap(node_t * p_f_node, node_t * p_s_node);
 
 /**
- * @brief 
+ * @brief Compares data from two given nodes with the user's defined comapre function
  *
  * @param p_f_node
  * @param p_s_node
@@ -135,29 +135,50 @@ END:
 
 void * llist_dequeue(llist_t * p_list)
 {
-	void * p_data = NULL;
-
-	if ((NULL == p_list) ||
+	if ((NULL == p_list) &&
 		(NULL == p_list->p_head))
 	{
 		goto END;
 	}
 
-	node_t * p_tmp = p_list->p_tail;
-	p_data = p_tmp->p_ptr;
+	node_t * p_tmp = p_list->p_head;
+	void * p_data = p_tmp->p_ptr;
 
-	node_t * p_prev = p_list->p_head;
+	p_list->p_head = p_tmp->p_next;
+	p_list->size--;
 
-	while (p_prev->p_next != p_tmp)
+	if (NULL == p_list->p_head)
 	{
-		p_prev = p_prev->p_next;
+		p_list->p_tail = NULL;
 	}
 
-	p_list->p_tail = p_prev;
-	p_list->p_tail->p_next = NULL;
+	free(p_tmp);
 
 END:
 	return p_data;
+//	void * p_data = NULL;
+//
+//	if ((NULL == p_list) ||
+//		(NULL == p_list->p_head))
+//	{
+//		goto END;
+//	}
+//
+//	node_t * p_tmp = p_list->p_tail;
+//	p_data = p_tmp->p_ptr;
+//
+//	node_t * p_prev = p_list->p_head;
+//
+//	while (p_prev->p_next != p_tmp)
+//	{
+//		p_prev = p_prev->p_next;
+//	}
+//
+//	p_list->p_tail = p_prev;
+//	p_list->p_tail->p_next = NULL;
+//
+//END:
+//	return p_data;
 }
 
 int llist_push(llist_t * p_list, void * p_data)
