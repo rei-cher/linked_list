@@ -30,6 +30,24 @@ struct llist
 };
 
 // TODO: static function prototypes here
+/**
+ * @brief 
+ *
+ * @param p_f_node
+ * @param p_s_node
+ */
+static void swap(node_t * p_f_node, node_t * p_s_node);
+
+/**
+ * @brief 
+ *
+ * @param p_f_node
+ * @param p_s_node
+ * @param p_comp
+ */
+static void compare_and_swap(node_t * p_f_node, 
+							 node_t * p_s_node, 
+							 comp_f p_comp);
 
 llist_t * llist_create(void)
 {
@@ -294,20 +312,25 @@ int llist_sort(llist_t * p_list, comp_f p_comp)
 	int SUCCESS = 1;
 
 	if ((NULL == p_list) ||
-		(NULL == p_comp))
+		(NULL == p_comp) ||
+		(NULL == p_list->p_head))
 	{
 		goto END;
 	}
+	
+	node_t * p_lptr = NULL;
 
-	node_t * current = p_list->p_head;
-
-	while (NULL != current)
+	while (p_list->p_head->p_next != p_lptr)
 	{
-		if (!p_comp(current, current->p_next))
+		node_t * p_current = p_list->p_head;
+
+		while (p_current->p_next != p_lptr)
 		{
-			continue;
+			compare_and_swap(p_current, p_current->p_next, p_comp);
+			p_current = p_current->p_next;
 		}
 
+		p_lptr = p_current;
 	}
 
 	SUCCESS = 0;
@@ -317,5 +340,20 @@ END:
 }
 
 // TODO: static function definitions here
+static void compare_and_swap(node_t * p_f_node, 
+							 node_t * p_s_node, 
+							 comp_f p_comp)
+{
+	if (0 < p_comp(p_f_node->p_ptr, p_s_node->p_ptr))
+	{
+		swap(p_f_node, p_s_node);
+	}
+}
+static void swap(node_t * p_f_node, node_t * p_s_node)
+{
+	void * p_tmp = p_f_node->p_ptr;
+	p_f_node->p_ptr = p_s_node->p_ptr;
+	p_s_node->p_ptr = p_tmp;
+}
 
 // end of llist.c
